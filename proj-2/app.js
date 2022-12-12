@@ -28,7 +28,30 @@ server.on('connection', (clientToProxySocket) => {
             serverAddress = data.toString().split("Host: ")[1].split("\n")[0]
         }
 
-        
+        // creating a connection from proxy to destination server
+        let proxyToServer = net.createConnection({
+            host: serverAddress,
+            port: serverPort
+        }, () => {
+            console.log("Proxy to server set up")
+        })
+
+        if (isTLSConnection) {
+            clientToProxySocket.write('HTTP/1.1 200 OK\r\n\n')
+        } else {
+            proxyToServer.write(data)
+        }
+
+        clientToProxySocket.pipe(proxyToServer)
+        proxyToServer.pipe(clientToProxySocket)
+
+        proxyToServer.on('error', err => {
+            console.log("proxy to server error : " + err);
+        })
+
+        clientToProxySocket.on('error', err => {
+            console.log("Client to proxy error");
+        })
     })
 })
 
