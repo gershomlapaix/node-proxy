@@ -4,9 +4,32 @@ const server = net.createServer()
 /*
 listening to the new connection
 clientToProxySocket: triggers an event "data"
-*/ 
+*/
 server.on('connection', (clientToProxySocket) => {
     console.log("client connected to the proxy");
+    clientToProxySocket.once('data', data => {
+
+        // checking if the connection is http or https
+
+        let isTLSConnection = data.toString().indexOf('CONNECT') !== -1
+
+        let serverPort = 443
+        let serverAddress;
+
+        if (isTLSConnection) {
+            serverPort = 443
+
+            serverAddress = data.toString().split("CONNECT")[1].split(" ")[1].split(':')[0]
+            console.log("output");
+            console.log(data.toString().split("CONNECT")[1], data.toString().split("CONNECT")[1].split(" ")[1], data.toString().split("CONNECT")[1].split(" ")[1].split(':')[0])
+
+        } else {
+            // if it is not HTTPS, the port is now 80
+            serverAddress = data.toString().split("Host: ")[1].split("\n")[0]
+        }
+
+        
+    })
 })
 
 
