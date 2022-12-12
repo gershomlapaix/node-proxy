@@ -1,0 +1,9 @@
+{
+  "name": "proj-2",
+  "version": "1.0.0",
+  "main": "app.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon app.js"
+  }
+}
